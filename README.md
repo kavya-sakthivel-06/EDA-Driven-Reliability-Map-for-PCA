@@ -1,40 +1,34 @@
 
-# Beyond Explained Variance: PCA Reliability Map
+## Experiments Completed
 
-## Project Overview
+### 1. Real-Dataset Baseline
+- Dataset: Breast Cancer Wisconsin (Diagnostic), UCI ML Repository
+- Observations: 569
+- Features: 30
+- Classification model: Logistic Regression
+- Validation: Stratified 5-fold cross-validation
+- Comparison: Original features versus PCA retaining 95% variance
 
-This project investigates how dataset characteristics influence
-the reliability and predictive usefulness of Principal Component
-Analysis (PCA).
+### 2. PCA Variance Threshold Experiment
+Compared the original features against PCA retaining 80%, 85%, 90%, 95%, and 99% of variance.
 
-## Research Focus
+Metrics:
+- Accuracy
+- Balanced accuracy
+- F1-score
+- ROC-AUC
+- Fold-to-fold variability
+- Number of principal components
 
-- Noise and feature correlation
-- Limited sample sizes
-- Explained variance versus predictive performance
-- PCA stability under resampling
-- Conditions under which PCA helps or harms machine learning
+### Preliminary Findings
+On the initial dataset, PCA retaining 95% variance
+achieved 97.72% mean accuracy using 10 components,
+compared with 97.37% using the original 30 features.
 
-## Dataset
+The findings are preliminary and require further stability
+analysis and validation on additional real datasets.
 
-Breast Cancer Wisconsin (Diagnostic), obtained from the
-UCI Machine Learning Repository.
-
-Official source:
-https://archive.ics.uci.edu/dataset/17/breast-cancer-wisconsin-data-set
-
-## Current Progress
-
-- [x] Initial project structure created
-- [x] Python dependencies identified
-- [ ] Retrieve and inspect the original dataset
-- [ ] Establish a baseline using original features and PCA
-- [ ] Run controlled robustness experiments
-- [ ] Develop the PCA Reliability Map
-
-## Reproducibility
-
-Experiments will document their random seeds, preprocessing,
-evaluation metrics, and dataset sources.
-
-Research findings will be added after experiments are completed.
+## Next Steps
+- [ ] Evaluate PCA subspace stability under resampling
+- [ ] Validate on another real dataset
+- [ ] Integrate performance and stability into a reliability map
