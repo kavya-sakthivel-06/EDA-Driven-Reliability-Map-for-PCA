@@ -2,42 +2,29 @@
 from pathlib import Path
 
 import pandas as pd
-
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    accuracy_score,
-    balanced_accuracy_score,
-    f1_score,
-    roc_auc_score,
-)
-from sklearn.model_selection import (
-    StratifiedKFold,
-    cross_validate,
-)
+from sklearn.model_selection import StratifiedKFold, cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-
 
 ROOT = Path(__file__).resolve().parent
 DATA_PATH = ROOT / "data" / "breast_cancer_wisconsin.csv"
 OUTPUT_DIR = ROOT / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-# 1. Load the original UCI dataset saved by our inspection script
 df = pd.read_csv(DATA_PATH)
 
 X = df.drop(columns="diagnosis")
 y = df["diagnosis"].map({"B": 0, "M": 1})
 
 if y.isna().any():
-    raise ValueError("Unexpected diagnosis labels. Check the dataset.")
+    raise ValueError("Unexpected diagnosis labels.")
 
-print("Dataset loaded:", X.shape)
-print("Class counts:")
+print("Dataset shape:", X.shape)
+print("\nClass distribution:")
 print(y.value_counts().rename(index={0: "Benign", 1: "Malignant"}))
 
-# 2. Define comparable pipelines
 models = {
     "Original features": Pipeline([
         ("scaler", StandardScaler()),
@@ -50,7 +37,6 @@ models = {
     ]),
 }
 
-# 3. Use identical stratified folds for both approaches
 cv = StratifiedKFold(
     n_splits=5,
     shuffle=True,
@@ -77,6 +63,13 @@ for name, pipeline in models.items():
         n_jobs=-1,
     )
 
+    component_counts = (
+        [est.named_steps["pca"].n_components_
+         for est in scores["estimator"]]
+        if name == "PCA - 95% variance"
+        else [X.shape[1]] * cv.n_splits
+    )
+
     rows.append({
         "Approach": name,
         "Accuracy mean": scores["test_accuracy"].mean(),
@@ -86,34 +79,25 @@ for name, pipeline in models.items():
         "F1 mean": scores["test_f1"].mean(),
         "ROC-AUC mean": scores["test_roc_auc"].mean(),
         "ROC-AUC std": scores["test_roc_auc"].std(),
-        "Components used": (
-            X.shape[1]
-            if name == "Original features"
-            else int(
-                scores["estimator"][0]
-                .named_steps["pca"].n_components_
-            )
+        "Components used": round(
+            sum(component_counts) / len(component_counts), 1
         ),
     })
 
 results = pd.DataFrame(rows)
-results.to_csv(
-    OUTPUT_DIR / "real_dataset_baseline.csv",
-    index=False,
-)
+output_path = OUTPUT_DIR / "real_dataset_baseline.csv"
+results.to_csv(output_path, index=False)
 
 print("\nFIVE-FOLD CROSS-VALIDATION RESULTS")
 print(results.round(4).to_string(index=False))
 
 auc_original = results.loc[
-    results["Approach"] == "Original features",
-    "ROC-AUC mean",
+    results["Approach"] == "Original features", "ROC-AUC mean"
 ].iloc[0]
 
 auc_pca = results.loc[
-    results["Approach"] == "PCA - 95% variance",
-    "ROC-AUC mean",
+    results["Approach"] == "PCA - 95% variance", "ROC-AUC mean"
 ].iloc[0]
 
 print(f"\nROC-AUC change (PCA - original): {auc_pca - auc_original:+.4f}")
-print("Results saved to outputs/real_dataset_baseline.csv")
+print("Results saved to:", output_path)
