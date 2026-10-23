@@ -50,3 +50,29 @@ subspace had the highest similarity at every sample size.
 
 These results are exploratory and require validation on
 additional datasets and under other perturbations.
+
+
+### 4. PCA Reliability Under Controlled Noise
+
+Noise levels tested: 0.00, 0.05, 0.10, and 0.20
+Classification: Logistic Regression with stratified 5-fold CV
+PCA threshold: 95% explained variance
+Stability: 20 random subsets at 80% sample size
+
+Preliminary observations:
+- PCA had slightly higher mean accuracy than the original
+  features at all four tested noise levels.
+- PCA subspace similarity remained high, but did not
+  change monotonically with noise.
+- The number of components required to retain 95% variance
+  increased as noise intensity increased.
+
+Limitations:
+- Noise levels are controlled experimental settings.
+- Only one real dataset has been studied so far.
+- Small metric differences are not established as significant.
+- The stability comparisons use overlapping subsets.
+
+Generated results:
+- outputs/pca_noise_performance.csv
+- outputs/pca_noise_stability.csv
