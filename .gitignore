@@ -1,0 +1,21 @@
+
+# Python virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment and secrets
+.env
+
+# VS Code local settings
+.vscode/
+
+# Generated experiment outputs
+outputs/
+
+# Downloaded datasets (keep large or derived data out of Git)
+data/
+
