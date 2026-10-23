@@ -32,3 +32,21 @@ analysis and validation on additional real datasets.
 - [ ] Evaluate PCA subspace stability under resampling
 - [ ] Validate on another real dataset
 - [ ] Integrate performance and stability into a reliability map
+
+
+### 3. PCA Subspace Stability Experiment
+
+- Dataset: UCI Breast Cancer Wisconsin (Diagnostic)
+- Sample fractions: 70%, 80%, and 90%
+- PCA component counts: 5, 10, and 17
+- Resampling repetitions: 20 per sample fraction
+- Pairwise comparisons: 190 per component count and sample fraction
+- Stability metric: Mean squared cosine of principal angles
+
+Preliminary observation:
+Subspace similarity increased with sample size for all
+three component counts in this experiment. The 5-component
+subspace had the highest similarity at every sample size.
+
+These results are exploratory and require validation on
+additional datasets and under other perturbations.
